@@ -17,9 +17,6 @@ lerna-debug.log*
 /coverage
 /.nyc_output
 
-# Configuration
-/config/database.env
-
 # IDEs and editors
 /.idea
 .project
