@@ -1,0 +1,4 @@
+server:
+  origin: http://martinschildrenacademy.com
+
+synchronize: false
