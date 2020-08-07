@@ -4,6 +4,7 @@ import { Logger, ConflictException, InternalServerErrorException } from "@nestjs
 import { CreateUserDto } from "./dto/create-user.dto";
 import { DefaultStatusEnum } from "src/common/enum/default.status.enum";
 import * as bcrypt from "bcryptjs";
+import { UserAuthDto } from "./dto/user-auth.dto";
 
 @EntityRepository(Users)
 export class UsersRepository extends Repository<Users> {
@@ -30,6 +31,16 @@ export class UsersRepository extends Repository<Users> {
             } else {
                 throw new InternalServerErrorException('Somethig Went Wrong. Please check Log for more details');
             }
+        }
+    }
+
+    async validateUserPassword(userAuthDto: UserAuthDto): Promise<Users> {
+        const { email, password } = userAuthDto;
+        const user = await this.findOne({ email });
+        if (user && await user.validatePassword(password)) {
+            return user;
+        } else {
+            return null;
         }
     }
 

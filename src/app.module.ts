@@ -6,7 +6,7 @@ import { typeOrmConfig } from './database-connection/typeorm.config';
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forRoot(typeOrmConfig)
+    TypeOrmModule.forRoot(typeOrmConfig),
   ]
 })
 export class AppModule {}

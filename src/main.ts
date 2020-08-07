@@ -21,7 +21,9 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .setTitle('MCA')
     .setDescription('Martins Children Academy REST API list')
-    .setVersion('1.0').build();
+    .setVersion('1.0').addBearerAuth().build();
+
+    
 
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
