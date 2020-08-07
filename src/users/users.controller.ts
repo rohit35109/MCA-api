@@ -5,18 +5,22 @@ import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserAuthDto } from './dto/user-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/common/get-user.decorator';
 
 @Controller('users')
 @ApiTags('Users')
+@ApiBearerAuth()
 export class UsersController {
     constructor(private _userService: UsersService) {}
 
     @Get()
+    @UseGuards(AuthGuard())
     getAllUsers(): Promise<Users[]> {
         return this._userService.getAllUsers();
     }
 
     @Get('/:id')
+    @UseGuards(AuthGuard())
     getUserByID(
         @Param('id') id: string
     ): Promise<Users> {
@@ -24,11 +28,13 @@ export class UsersController {
     }
 
     @Post()
+    @UseGuards(AuthGuard())
     saveNewUser(@Body(ValidationPipe) userDto: CreateUserDto): Promise<void> {
         return this._userService.createNewUser(userDto);
     }
 
     @Delete('/:id')
+    @UseGuards(AuthGuard())
     deleteUser(@Param('id') id: string): Promise<void> {
         return this._userService.deleteUser(id);
     }
@@ -36,13 +42,6 @@ export class UsersController {
     @Post('/authenticate')
     authenticateUser(@Body(ValidationPipe) userAuthDto: UserAuthDto): Promise<{accessToken: string}> {
         return this._userService.authenticateUser(userAuthDto);
-    }
-
-    @Post('/test')
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard())
-    test(@Req() req): void {
-        console.log(req);
     }
 
 }

@@ -5,6 +5,7 @@ import { JwtPayload } from "src/users/interface/jwt-payload.interface";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UsersRepository } from "src/users/users.repository";
 import { Users } from "src/users/users.entity";
+import { ObjectID } from "mongodb";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,16 +20,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: JwtPayload): Promise<Users> {
-        const { name, id, email } = payload;
-        console.log(payload);
-        console.log(id);
-        const user = await this.userRepository.findOne({ email });
-        console.log(user);
-
+        const { id } = payload;
+        const user = await this.userRepository.findOne(id);
         if (!user) {
             throw new UnauthorizedException();
         }
-
         return user;
     }
 }
