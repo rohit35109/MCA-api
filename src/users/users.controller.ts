@@ -1,11 +1,10 @@
-import { Controller, Get, Param, Post, Body, ValidationPipe, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, ValidationPipe, Delete, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Users } from './users.entity';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserAuthDto } from './dto/user-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'src/common/get-user.decorator';
 
 @Controller('users')
 @ApiTags('Users')

@@ -5,6 +5,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { DefaultStatusEnum } from "src/common/enum/default.status.enum";
 import * as bcrypt from "bcryptjs";
 import { UserAuthDto } from "./dto/user-auth.dto";
+import { Roles } from "src/common/enum/roles.enum";
 
 @EntityRepository(Users)
 export class UsersRepository extends Repository<Users> {
@@ -13,12 +14,13 @@ export class UsersRepository extends Repository<Users> {
     async newUser(
         createUser: CreateUserDto
     ): Promise<void> {
-        const {name, email, password} = createUser;
+        const {name, email, password, roles} = createUser;
         const user = new Users();
         user.name = name;
         user.email = email;
         user.salt = await bcrypt.genSalt();
         user.password = await this.generatePassword(password, user.salt);
+        user.roles = (roles) ? roles : Roles.ADMIN;
         user.status = DefaultStatusEnum.ACTIVE;
 
         try {

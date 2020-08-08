@@ -1,6 +1,7 @@
 import { BaseEntity, Entity, Column, Unique, ObjectIdColumn, ObjectID } from "typeorm";
 import { DefaultStatusEnum } from "src/common/enum/default.status.enum";
 import * as bcrypt from "bcryptjs";
+import { Roles } from "src/common/enum/roles.enum";
 
 @Entity()
 @Unique(['email'])
@@ -23,6 +24,9 @@ export class Users extends BaseEntity {
 
     @Column()
     status: DefaultStatusEnum;
+
+    @Column()
+    roles: Roles;
 
     async validatePassword(password: string): Promise<boolean> {
         const hash = await bcrypt.hash(password, this.salt);

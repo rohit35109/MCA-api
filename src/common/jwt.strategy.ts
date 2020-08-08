@@ -5,7 +5,6 @@ import { JwtPayload } from "src/users/interface/jwt-payload.interface";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UsersRepository } from "src/users/users.repository";
 import { Users } from "src/users/users.entity";
-import { ObjectID } from "mongodb";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
