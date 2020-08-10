@@ -4,5 +4,4 @@ server:
 db:
   url: 'mongodb://localhost:27017/mca'
   type: 'mongodb'
-
-synchronize: true
+  synchronize: true

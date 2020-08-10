@@ -6,8 +6,6 @@ const dbConfig = config.get('db');
 export const typeOrmConfig: TypeOrmModuleOptions = {
     type: dbConfig.type,
     url: process.env.RDS_URL || dbConfig.url,
-    // username: "",
-    // password: "",
     entities: [
         __dirname + '/../**/*.entity{.ts,.js}'
     ],

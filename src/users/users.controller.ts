@@ -14,13 +14,13 @@ export class UsersController {
 
     @Get()
     @UseGuards(AuthGuard())
-    getAllUsers(): Promise<Users[]> {
+    async getAllUsers(): Promise<Users[]> {
         return this._userService.getAllUsers();
     }
 
     @Get('/:id')
     @UseGuards(AuthGuard())
-    getUserByID(
+    async getUserByID(
         @Param('id') id: string
     ): Promise<Users> {
         return this._userService.getUserById(id);
@@ -28,18 +28,18 @@ export class UsersController {
 
     @Post()
     @UseGuards(AuthGuard())
-    saveNewUser(@Body(ValidationPipe) userDto: CreateUserDto): Promise<void> {
+    async saveNewUser(@Body(ValidationPipe) userDto: CreateUserDto): Promise<void> {
         return this._userService.createNewUser(userDto);
     }
 
     @Delete('/:id')
     @UseGuards(AuthGuard())
-    deleteUser(@Param('id') id: string): Promise<void> {
+    async deleteUser(@Param('id') id: string): Promise<void> {
         return this._userService.deleteUser(id);
     }
 
     @Post('/authenticate')
-    authenticateUser(@Body(ValidationPipe) userAuthDto: UserAuthDto): Promise<{accessToken: string}> {
+    async authenticateUser(@Body(ValidationPipe) userAuthDto: UserAuthDto): Promise<{accessToken: string}> {
         return this._userService.authenticateUser(userAuthDto);
     }
 
