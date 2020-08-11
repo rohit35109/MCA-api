@@ -43,11 +43,11 @@ export class StudentsService {
             });
         }
 
-        if (user.roles === Roles.STAFF) {
-            students = students.filter((student) => {
-                return student.createdBy === user.id.toString();
-            });
-        }
+        // if (user.roles === Roles.STAFF) {
+        //     students = students.filter((student) => {
+        //         return student.createdBy === user.id.toString();
+        //     });
+        // }
         return students;
     }
 }
