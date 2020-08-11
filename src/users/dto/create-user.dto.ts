@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsEmail, IsString, MinLength, MaxLength, IsEnum } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsEmail, IsString, MinLength, MaxLength, IsEnum, IsOptional } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Roles } from "src/common/enum/roles.enum";
 
 export class CreateUserDto {
@@ -42,4 +42,31 @@ export class CreateUserDto {
     @IsEnum(Roles)
     roles: Roles;
     
+
+    @ApiPropertyOptional({
+        default: "",
+        description: `
+            Optional and should be passed if Staff.
+        `
+    })
+    @IsOptional()
+    branch: string;
+
+    @ApiPropertyOptional({
+        default: "",
+        description: `
+            Optional and should be passed if Staff.
+        `
+    })
+    @IsOptional()
+    classes: string;
+
+    @ApiPropertyOptional({
+        default: "",
+        description: `
+            Optional and should be passed if Staff.
+        `
+    })
+    @IsOptional()
+    section: string;
 }

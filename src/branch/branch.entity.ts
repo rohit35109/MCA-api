@@ -14,4 +14,7 @@ export class Branch extends BaseEntity {
     @Column()
     status: DefaultStatusEnum;
 
+    @Column()
+    createdBy: string;
+
 }

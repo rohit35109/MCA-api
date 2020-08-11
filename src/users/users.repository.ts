@@ -12,15 +12,20 @@ export class UsersRepository extends Repository<Users> {
     private logger = new Logger('User Repository');
 
     async newUser(
-        createUser: CreateUserDto
+        createUser: CreateUserDto,
+        userData: Users
     ): Promise<void> {
-        const {name, email, password, roles} = createUser;
+        const {name, email, password, roles, branch, classes, section} = createUser;
         const user = new Users();
         user.name = name;
         user.email = email;
         user.salt = await bcrypt.genSalt();
         user.password = await this.generatePassword(password, user.salt);
         user.roles = (roles) ? roles : Roles.ADMIN;
+        user.branch = branch;
+        user.classes = classes;
+        user.section = section;
+        user.createdBy = (userData) ? userData.id.toString() : "";
         user.status = DefaultStatusEnum.ACTIVE;
 
         try {

@@ -5,6 +5,7 @@ import { SectionRepository } from './section.repository';
 import { ClassSectionDto } from './dto/class-section.dto';
 import { Classes } from './classes.entity';
 import { Section } from './section.entity';
+import { Users } from 'src/users/users.entity';
 
 @Injectable()
 export class ClassDetailsService {
@@ -40,9 +41,9 @@ export class ClassDetailsService {
         return classDetail;
     }
 
-    async createNewClassAndSection(classSection: ClassSectionDto): Promise<void> {
+    async createNewClassAndSection(classSection: ClassSectionDto, user: Users): Promise<void> {
         const sectionCount = classSection.sectionCount;
-        const savedClassDetails = this.classes.createClass(classSection);
+        const savedClassDetails = this.classes.createClass(classSection, user);
         return savedClassDetails.then(savedClassDetail => {
             if (!savedClassDetail) {
                 throw new InternalServerErrorException('Something Went Wrong. Please check the log');

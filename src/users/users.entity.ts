@@ -2,6 +2,7 @@ import { BaseEntity, Entity, Column, Unique, ObjectIdColumn, ObjectID } from "ty
 import { DefaultStatusEnum } from "src/common/enum/default.status.enum";
 import * as bcrypt from "bcryptjs";
 import { Roles } from "src/common/enum/roles.enum";
+import { IsOptional, IsEnum } from "class-validator";
 
 @Entity()
 @Unique(['email'])
@@ -27,6 +28,30 @@ export class Users extends BaseEntity {
 
     @Column()
     roles: Roles;
+
+    @Column({
+        default: '',
+        nullable: true
+    })
+    branch: string;
+
+    @Column({
+        default: '',
+        nullable: true
+    })
+    classes: string;
+
+    @Column({
+        default: '',
+        nullable: true
+    })
+    section: string;
+
+    @Column({
+        default: '',
+        nullable: true
+    })
+    createdBy: string;
 
     async validatePassword(password: string): Promise<boolean> {
         const hash = await bcrypt.hash(password, this.salt);

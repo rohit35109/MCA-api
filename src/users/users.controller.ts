@@ -5,6 +5,7 @@ import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserAuthDto } from './dto/user-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/common/get-user.decorator';
 
 @Controller('users')
 @ApiTags('Users')
@@ -28,8 +29,11 @@ export class UsersController {
 
     @Post()
     @UseGuards(AuthGuard())
-    async saveNewUser(@Body(ValidationPipe) userDto: CreateUserDto): Promise<void> {
-        return this._userService.createNewUser(userDto);
+    async saveNewUser(
+        @Body(ValidationPipe) userDto: CreateUserDto,
+        @GetUser() user: Users
+        ): Promise<void> {
+        return this._userService.createNewUser(userDto, user);
     }
 
     @Delete('/:id')

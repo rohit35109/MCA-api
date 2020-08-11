@@ -19,5 +19,8 @@ export class Classes extends BaseEntity {
     @Column()
     status: DefaultStatusEnum;
 
+    @Column()
+    createdBy: string;
+
     sections: Section[];
 }

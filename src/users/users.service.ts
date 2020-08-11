@@ -18,14 +18,20 @@ export class UsersService {
 
     async getAllUsers(): Promise<Users[]> {
         return await this.userRepository.find({
-            select: ["id", "name", "email", "status"]
+            select: ["id", "name", "email", "status", "classes", "createdBy",
+             "section", "branch"]
         });
     }
 
     async getUserById(id: string): Promise<Users> {
         let found = null
         try {
-            found = await this.userRepository.findOne(id);
+            found = await this.userRepository.findOne(id, {
+                select: [
+                    "id", "name", "email", "status", "classes", "createdBy",
+                    "section", "branch"
+                ]
+            });
             if (!found) {
                 throw new NotFoundException(`User with ID: ${id} was not found`);
             }
@@ -36,8 +42,11 @@ export class UsersService {
         return found;
     }
 
-    async createNewUser(createUser: CreateUserDto): Promise<void> {
-        return this.userRepository.newUser(createUser);
+    async createNewUser(
+        createUser: CreateUserDto,
+        user: Users
+        ): Promise<void> {
+        return this.userRepository.newUser(createUser, user);
     }
 
     async deleteUser(id: string): Promise<void> {
