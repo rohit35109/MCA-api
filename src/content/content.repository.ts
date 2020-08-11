@@ -7,13 +7,15 @@ import { InternalServerErrorException } from "@nestjs/common";
 @EntityRepository(Content)
 export class ContentRepository extends Repository<Content> {
     async addNewContent(createNewContent: ContentUploadDto, user: Users): Promise<Content> {
-        const { type, branch, classes, content, section } = createNewContent;
+        const { type, branch, classes, content, section, chapter, subject} = createNewContent;
         const contDB = new Content();
         contDB.type = type;
         contDB.classes = classes;
         contDB.branch = branch;
         contDB.section = section;
         contDB.content = content;
+        contDB.subject = subject;
+        contDB.chapter = chapter;
         contDB.addedBy = user.id.toString();
 
         try {

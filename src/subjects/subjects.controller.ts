@@ -10,7 +10,6 @@ import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Subjects')
 @Controller('subjects')
-@ApiBearerAuth()
 export class SubjectsController {
 
     constructor(
@@ -18,6 +17,7 @@ export class SubjectsController {
     ) {}
 
     @Post()
+    @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async createNewSubject(
         @Body(ValidationPipe) createSubjectDto: CreateSubjectDto,

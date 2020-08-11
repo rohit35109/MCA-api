@@ -9,17 +9,18 @@ import { GetUser } from 'src/common/get-user.decorator';
 
 @Controller('users')
 @ApiTags('Users')
-@ApiBearerAuth()
 export class UsersController {
     constructor(private _userService: UsersService) {}
 
     @Get()
+    @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async getAllUsers(): Promise<Users[]> {
         return this._userService.getAllUsers();
     }
 
     @Get('/:id')
+    @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async getUserByID(
         @Param('id') id: string
@@ -28,6 +29,7 @@ export class UsersController {
     }
 
     @Post()
+    @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async saveNewUser(
         @Body(ValidationPipe) userDto: CreateUserDto,
@@ -37,6 +39,7 @@ export class UsersController {
     }
 
     @Delete('/:id')
+    @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async deleteUser(@Param('id') id: string): Promise<void> {
         return this._userService.deleteUser(id);

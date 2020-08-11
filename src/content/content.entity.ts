@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, ObjectID, ObjectIdColumn, Column } from "typeorm";
+import { BaseEntity, Entity, ObjectID, ObjectIdColumn, Column, CreateDateColumn } from "typeorm";
 import { ContentTypeEnum } from "./enum/content-type.enum";
 @Entity()
 export class Content extends BaseEntity {
@@ -26,8 +26,14 @@ export class Content extends BaseEntity {
     @Column()
     branch: string;
 
-    @Column({
-        default: new Date()
+    @Column()
+    subject: string;
+
+    @Column()
+    chapter: string;
+
+    @CreateDateColumn({
+        type: 'timestamp'
     })
     createdOn: Date;
 }

@@ -33,4 +33,12 @@ export class ContentUploadDto {
     @IsNotEmpty()
     @ApiProperty()
     branch: string;
+
+    @IsNotEmpty()
+    @ApiProperty()
+    subject: string;
+
+    @IsNotEmpty()
+    @ApiProperty()
+    chapter: string;
 }

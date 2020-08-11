@@ -9,24 +9,22 @@ import { GetUser } from 'src/common/get-user.decorator';
 
 @ApiTags('Class & Section')
 @Controller('class-details')
-@ApiBearerAuth()
 export class ClassDetailsController {
 
     constructor(private service: ClassDetailsService) {}
 
     @Get()
-    @UseGuards(AuthGuard())
     async getAllClassDetails(): Promise<Classes[]> {
         return this.service.getAllClassesAndSection();
     }
 
     @Get('/:id')
-    @UseGuards(AuthGuard())
     async getClassDetailsById(@Param('id') id: string): Promise<Classes> {
         return this.service.getClassById(id);
     }
 
     @Post()
+    @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async createNewClassSection(
         @Body(ValidationPipe) classSectionDto: ClassSectionDto,

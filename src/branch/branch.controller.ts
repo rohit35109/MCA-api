@@ -9,7 +9,6 @@ import { Users } from 'src/users/users.entity';
 
 @Controller('branch')
 @ApiTags('Branch')
-@ApiBearerAuth()
 export class BranchController {
 
     constructor(private branchService: BranchService) {}
@@ -25,6 +24,7 @@ export class BranchController {
     }
 
     @Post()
+    @ApiBearerAuth()
     @UseGuards(AuthGuard())
     createNewBranch(
         @Body(ValidationPipe) branchDto: BranchDto,
