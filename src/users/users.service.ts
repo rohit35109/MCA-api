@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserAuthDto } from './dto/user-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interface/jwt-payload.interface';
+import { Roles } from 'src/common/enum/roles.enum';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +15,9 @@ export class UsersService {
         @InjectRepository(UsersRepository)
         private userRepository: UsersRepository,
         private jwtService: JwtService,
-    ) {}
+    ) {
+        this.checkIfMasterAdminExistsAndAdd();
+    }
 
     async getAllUsers(): Promise<Users[]> {
         return await this.userRepository.find({
@@ -76,5 +79,19 @@ export class UsersService {
          };
         const accessToken = await this.jwtService.sign(payload);
         return { accessToken };
+    }
+
+    async checkIfMasterAdminExistsAndAdd(): Promise<void> {
+        const adminUser = await this.userRepository.findOne({
+            where: {
+                email: 'admin@mca.com'
+            }
+        });
+        if (!adminUser) {
+            return await this.createNewUser({
+                name: 'Admin', email: 'admin@mca.com', branch: '', classes: '', section: '',
+                password: 'mca@123', roles: Roles.ADMIN
+            }, null);
+        }
     }
 }

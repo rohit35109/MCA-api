@@ -17,6 +17,8 @@ import { SubjectsModule } from './subjects/subjects.module';
     StudentsModule,
     ContentModule,
     SubjectsModule,
-  ]
+  ],
+
 })
-export class AppModule {}
+export class AppModule {
+}
