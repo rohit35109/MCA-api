@@ -26,7 +26,7 @@ export class ContentController {
         @UploadedFile() file: any,
         ): Promise<Content> {
         const filename = (file && file.filename) ? file.filename : null;
-        return await this.service.addNewContent(contentUploadDto, user, file.filename);
+        return await this.service.addNewContent(contentUploadDto, user, filename);
     }
 
     @Get()
