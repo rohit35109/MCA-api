@@ -28,10 +28,10 @@ async function bootstrap() {
     logger.log(`Production: Accepting requests from origin ${serverConfig.origin}`);
     await app.init();
     https.createServer(httpsOptions, server).listen(port);
-    http.createServer(function(req, res) {
-      res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
-      res.end();
-    }).listen(port);
+    // http.createServer(function(req, res) {
+    //   res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
+    //   res.end();
+    // }).listen(8000);
     logger.log(`Application is running on port: ${port}`);
   } else {
     app = await NestFactory.create(AppModule);
