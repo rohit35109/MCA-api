@@ -23,9 +23,7 @@ async function bootstrap() {
       ca: fs.readFileSync('/etc/letsencrypt/live/martinschildrenacademy.com/chain.pem', 'utf8')
     };
     app = await NestFactory.create(AppModule, new ExpressAdapter(server));
-    app.enableCors({
-      origin: serverConfig.origin
-    });
+    app.enableCors();
     swaggerInitialization(app);
     logger.log(`Production: Accepting requests from origin ${serverConfig.origin}`);
     await app.init();

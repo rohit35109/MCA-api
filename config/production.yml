@@ -1,2 +1,2 @@
 server:
-  origin: *
+  origin: [https://www.martinschildrenacademy.com, https://martinschildrenacademy.com]
