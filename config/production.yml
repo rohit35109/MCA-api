@@ -1,2 +1,2 @@
 server:
-  origin: http://martinschildrenacademy.com
+  origin: *

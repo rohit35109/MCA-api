@@ -24,12 +24,12 @@ async function bootstrap() {
     };
     app = await NestFactory.create(AppModule, new ExpressAdapter(server));
     app.enableCors({
-      origin: ['*', serverConfig.origin]
+      origin: serverConfig.origin
     });
     swaggerInitialization(app);
     logger.log(`Production: Accepting requests from origin ${serverConfig.origin}`);
     await app.init();
-    https.createServer(httpsOptions, server).listen(443);
+    https.createServer(httpsOptions, server).listen(port);
     http.createServer(function(req, res) {
       res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
       res.end();
