@@ -2,6 +2,6 @@ server:
   origin: [https://www.martinschildrenacademy.com, https://martinschildrenacademy.com]
 
 db:
-  url: 'mongodb://rohit:FivoTech%402020@139.59.95.132:27017/mca'
+  url: 'mongodb+srv://mcauser:FivoTech$2020@cluster0.3raco.mongodb.net/mca?retryWrites=true&w=majority'
   type: 'mongodb'
   synchronize: true

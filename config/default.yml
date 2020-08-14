@@ -2,6 +2,6 @@ server:
   port: '3000'
 
 db:
-  url: 'mongodb://localhost:27017/mca'
+  url: 'mongodb+srv://mcauser:FivoTech$2020@cluster0.3raco.mongodb.net/mca?retryWrites=true&w=majority'
   type: 'mongodb'
   synchronize: true
