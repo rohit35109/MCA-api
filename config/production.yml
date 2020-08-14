@@ -1,2 +1,7 @@
 server:
   origin: [https://www.martinschildrenacademy.com, https://martinschildrenacademy.com]
+
+db:
+  url: 'mongodb://rohit:FivoTech%402020@localhost:27017/mca'
+  type: 'mongodb'
+  synchronize: true
