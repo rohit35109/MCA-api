@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, ValidationPipe, UseGuards, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, ValidationPipe, UseGuards, Patch, Delete, Put } from '@nestjs/common';
 import { Branch } from './branch.entity';
 import { BranchService } from './branch.service';
 import { BranchDto } from './dto/branch.dto';
@@ -24,7 +24,7 @@ export class BranchController {
         return await this.branchService.getBranchId(id);
     }
 
-    @Post()
+    @Put()
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async updateBranch(

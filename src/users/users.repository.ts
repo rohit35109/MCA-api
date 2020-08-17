@@ -1,6 +1,6 @@
 import { Repository, EntityRepository } from "typeorm";
 import { Users } from "./users.entity";
-import { Logger, ConflictException, InternalServerErrorException } from "@nestjs/common";
+import { Logger, ConflictException, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { DefaultStatusEnum } from "src/common/enum/default.status.enum";
 import * as bcrypt from "bcryptjs";
@@ -46,13 +46,17 @@ export class UsersRepository extends Repository<Users> {
         updateUser: UpdateUserDto
     ): Promise<void> {
         const {id, name, email, password, roles, branch, classes, section} = updateUser;
-        const user = await this.findOne({ id })
+        const user = await this.findOne(id);
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} is not found`);
+        }
         user.name = name;
         user.email = email;
         if (password && password !== '') {
             user.salt = await bcrypt.genSalt();
             user.password = await this.generatePassword(password, user.salt);
         }
+        user.roles = roles;
         user.branch = branch;
         user.classes = classes;
         user.section = section;

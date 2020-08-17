@@ -51,11 +51,7 @@ export class StudentsService {
     }
 
     async getStudentByID(id: string): Promise<Students> {
-        const student = await this.studentRepo.findOne({
-            where: {
-                id
-            }
-        });
+        const student = await this.studentRepo.findOne(id);
         if (!student) {
             throw new NotFoundException(`Student with ID ${id} was not found`);
         }

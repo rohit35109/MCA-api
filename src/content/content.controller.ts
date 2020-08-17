@@ -8,6 +8,7 @@ import { GetUser } from 'src/common/get-user.decorator';
 import { Users } from 'src/users/users.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { FilterUploadDto } from './dto/filter-upload.dto';
+import { diskStorage } from 'multer';
 
 @ApiTags('Content')
 @Controller('content')
@@ -18,7 +19,16 @@ export class ContentController {
     @Post()
     @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
-    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './upload',
+            filename: (req, file, cb) => {
+                const fileNameSplit: string[] = file.originalname.split(".");
+                const fileExt = fileNameSplit[fileNameSplit.length - 1];
+                cb(null, `${Date.now()}.${fileExt}`);
+            }
+        })
+    }))
     @UseGuards(AuthGuard())
     async createNewContent(
         @GetUser() user: Users,
