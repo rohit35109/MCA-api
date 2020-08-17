@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, ValidationPipe, UseGuards, Patch } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, ValidationPipe, UseGuards, Patch, Delete } from '@nestjs/common';
 import { Branch } from './branch.entity';
 import { BranchService } from './branch.service';
 import { BranchDto } from './dto/branch.dto';
@@ -33,7 +33,7 @@ export class BranchController {
         return await this.branchService.updateBranch(branchDto);
     }
 
-    @Patch(':id')
+    @Delete(':id')
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async deleteBranch(

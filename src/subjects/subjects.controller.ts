@@ -38,7 +38,7 @@ export class SubjectsController {
         return await this.service.getSubjectByID(id);
     }
 
-    @Post()
+    @Put()
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async udpateSubject(
