@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Post, Body, ValidationPipe, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, ValidationPipe, Delete, UseGuards, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Users } from './users.entity';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserAuthDto } from './dto/user-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/common/get-user.decorator';
@@ -36,6 +37,15 @@ export class UsersController {
         @GetUser() user: Users
         ): Promise<void> {
         return this._userService.createNewUser(userDto, user);
+    }
+
+    @Put()
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async updateUser(
+        @Body(ValidationPipe) updateUser: UpdateUserDto,
+        ): Promise<void> {
+        return this._userService.updateNewUser(updateUser);
     }
 
     @Delete('/:id')

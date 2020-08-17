@@ -6,6 +6,7 @@ import { DefaultStatusEnum } from "src/common/enum/default.status.enum";
 import * as bcrypt from "bcryptjs";
 import { UserAuthDto } from "./dto/user-auth.dto";
 import { Roles } from "src/common/enum/roles.enum";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @EntityRepository(Users)
 export class UsersRepository extends Repository<Users> {
@@ -31,6 +32,34 @@ export class UsersRepository extends Repository<Users> {
         try {
             await user.save();
             this.logger.log('Adding new User')
+        } catch(err) {
+            this.logger.error(err.stack);
+            if (err.code === 11000) {
+                throw new ConflictException('Email ID Already exisits');
+            } else {
+                throw new InternalServerErrorException('Somethig Went Wrong. Please check Log for more details');
+            }
+        }
+    }
+
+    async udpateUser(
+        updateUser: UpdateUserDto
+    ): Promise<void> {
+        const {id, name, email, password, roles, branch, classes, section} = updateUser;
+        const user = await this.findOne({ id })
+        user.name = name;
+        user.email = email;
+        if (password && password !== '') {
+            user.salt = await bcrypt.genSalt();
+            user.password = await this.generatePassword(password, user.salt);
+        }
+        user.branch = branch;
+        user.classes = classes;
+        user.section = section;
+
+        try {
+            await user.save();
+            this.logger.log('Updated User')
         } catch(err) {
             this.logger.error(err.stack);
             if (err.code === 11000) {

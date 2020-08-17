@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StudentsRepository } from './students.repository';
 import { AddNewStudentDto } from './dto/add-new-student.dto';
@@ -20,6 +20,27 @@ export class StudentsService {
         return await this.studentRepo.addNewStudent(addNewStudentDto, user);
     }
 
+    async udpateStudent(updateStudentDto: AddNewStudentDto): Promise<Students> {
+        const student = await this.getStudentByID(updateStudentDto.id);
+        student.branch = updateStudentDto.branch;
+        student.classes = updateStudentDto.classes;
+        student.name = updateStudentDto.name;
+        student.roll = updateStudentDto.roll;
+        student.watsapp = updateStudentDto.watsapp;
+        student.section = updateStudentDto.section;
+        await student.save();
+        return student;
+    }
+
+    async deleteStudent(id: string): Promise<void> {
+        const result = await this.studentRepo.delete({
+            id
+        });
+        if (result.affected === 0) {
+            throw new NotFoundException(`Student with ID: ${id} cannot be deleted.`);
+        }
+    }
+
     async getStudentDetailsAuth(filterDto: StudentDetailsDto): Promise<Students> {
         return await this.studentRepo.findOne({
             where: {
@@ -27,6 +48,18 @@ export class StudentsService {
                 watsapp: filterDto.watsapp
             }
         })
+    }
+
+    async getStudentByID(id: string): Promise<Students> {
+        const student = await this.studentRepo.findOne({
+            where: {
+                id
+            }
+        });
+        if (!student) {
+            throw new NotFoundException(`Student with ID ${id} was not found`);
+        }
+        return student;
     }
 
     async getStudents(filterDto: FilterStudentDto, user: Users): Promise<Students[]> {

@@ -1,4 +1,4 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Body, Res, Get, Param, UseGuards, Query, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, Body, Res, Get, Param, UseGuards, Query, ValidationPipe, Delete } from '@nestjs/common';
 import { ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ContentUploadDto } from './dto/content-upload.dto';
@@ -27,6 +27,13 @@ export class ContentController {
         ): Promise<Content> {
         const filename = (file && file.filename) ? file.filename : null;
         return await this.service.addNewContent(contentUploadDto, user, filename);
+    }
+
+    @Delete(':id')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async deleteContent(@Param('id') id: string) {
+        return await this.service.deleteContent(id);
     }
 
     @Get()

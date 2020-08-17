@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ContentRepository } from './content.repository';
 import { ContentUploadDto } from './dto/content-upload.dto';
@@ -53,6 +53,16 @@ export class ContentService {
             });
         }
         return allContent;
+    }
+
+    async deleteContent(id: string): Promise<void> {
+        const result = await this.contentRepo.delete({
+            id
+        });
+        if (result.affected === 0) {
+            throw new NotFoundException(`Content with ID: ${id} is not found.`);
+        }
+        return;
     }
 
     async addNewContent(contentDto: ContentUploadDto, user: Users, filename?:string): Promise<Content> {

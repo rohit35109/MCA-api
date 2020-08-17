@@ -1,8 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, IsEnum } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsEnum, IsOptional } from "class-validator";
 import { DefaultStatusEnum } from "src/common/enum/default.status.enum";
 
 export class BranchDto {
+
+    @ApiPropertyOptional({
+        description: `User only for Update`
+    })
+    @IsOptional()
+    @IsString()
+    id: string;
 
     @ApiProperty({
         description: `

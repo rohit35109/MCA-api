@@ -1,9 +1,14 @@
 import { DefaultStatusEnum } from "src/common/enum/default.status.enum";
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, IsArray, IsEnum } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsArray, IsEnum, IsOptional } from "class-validator";
 
 export class CreateSubjectDto {
 
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsString()
+    id: string;
+    
     @ApiProperty()
     @IsNotEmpty()
     @IsString()

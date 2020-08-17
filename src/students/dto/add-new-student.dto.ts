@@ -1,7 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsPhoneNumber } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsString, IsNotEmpty, IsPhoneNumber, IsOptional } from "class-validator";
 
 export class AddNewStudentDto {
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsString()
+    id: string;
 
     @ApiProperty()
     @IsNotEmpty()

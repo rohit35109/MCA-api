@@ -1,4 +1,4 @@
-import { Controller, Post, Body, ValidationPipe, UseGuards, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, ValidationPipe, UseGuards, Get, Query, Param, Put, Delete } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AddNewStudentDto } from './dto/add-new-student.dto';
@@ -25,10 +25,30 @@ export class StudentsController {
             return await this.service.addNewStudent(addNewStudentDto, user);
         }
 
+    @Put()
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async updateStudent(
+        @Body(ValidationPipe) addNewStudentDto: AddNewStudentDto): Promise<Students> {
+            return await this.service.udpateStudent(addNewStudentDto);
+        }
+
+    @Delete(':id')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async deleteStudent(@Param('id') id: string): Promise<void> {
+        return await this.service.deleteStudent(id);
+    }
+
     @Post('login')
     async getStudentDetailsByLogin(
         @Body(ValidationPipe) filterStudentDto: StudentDetailsDto): Promise<Students> {
             return await this.service.getStudentDetailsAuth(filterStudentDto);
+        }
+
+    @Get(':id')
+    async getStudentId(@Param('id') id: string): Promise<Students> {
+            return await this.service.getStudentByID(id);
         }
 
     @Get()

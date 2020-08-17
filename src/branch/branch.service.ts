@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BranchRepository } from './branch.repository';
 import { Branch } from './branch.entity';
 import { BranchDto } from './dto/branch.dto';
 import { Users } from 'src/users/users.entity';
+import { DefaultStatusEnum } from 'src/common/enum/default.status.enum';
 
 @Injectable()
 export class BranchService {
@@ -19,7 +20,26 @@ export class BranchService {
     }
 
     public async getBranchId(id: string): Promise<Branch> {
-        return await this.branchRepository.findOne(id);
+        const branch = await this.branchRepository.findOne(id);
+        if (!branch) {
+            throw new NotFoundException(`Branch with ID ${id} was not found`);
+        }
+        return branch;
+    }
+
+    public async updateBranch(branchDto: BranchDto): Promise<Branch> {
+        const branch = await this.getBranchId(branchDto.id);
+        branch.name = branchDto.name;
+        branch.status = branchDto.status;
+        await branch.save();
+        return branch;
+    }
+
+    public async deleteBranch(id: string): Promise<Branch> {
+        const branch = await this.getBranchId(id);
+        branch.status = DefaultStatusEnum.DELETED;
+        await branch.save();
+        return branch;
     }
 
     public async createNewBranch(branchDto: BranchDto, user: Users): Promise<void> {
