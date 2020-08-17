@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BranchRepository } from './branch.repository';
 import { Branch } from './branch.entity';
@@ -31,7 +31,15 @@ export class BranchService {
         const branch = await this.getBranchId(branchDto.id);
         branch.name = branchDto.name;
         branch.status = branchDto.status;
-        await branch.save();
+        try {
+            await branch.save();
+        } catch(err) {
+            if (err.code === 11000) {
+                throw new ConflictException('Batch Name already exists');
+            } else {
+                throw new InternalServerErrorException('Something went wrong. Please contact administrator');
+            }
+        }
         return branch;
     }
 
