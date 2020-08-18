@@ -32,6 +32,9 @@ export class Content extends BaseEntity {
     @Column()
     chapter: string;
 
+    @Column()
+    title: string;
+
     @CreateDateColumn({
         type: 'timestamp'
     })

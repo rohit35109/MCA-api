@@ -41,4 +41,8 @@ export class ContentUploadDto {
     @IsNotEmpty()
     @ApiProperty()
     chapter: string;
+
+    @IsNotEmpty()
+    @ApiProperty()
+    title: string;
 }
