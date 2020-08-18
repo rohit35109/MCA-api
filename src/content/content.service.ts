@@ -56,13 +56,10 @@ export class ContentService {
     }
 
     async deleteContent(id: string): Promise<void> {
-        const result = await this.contentRepo.delete({
-            id
-        });
+        const result = await this.contentRepo.delete(id);
         if (result.affected === 0) {
             throw new NotFoundException(`Content with ID: ${id} is not found.`);
         }
-        return;
     }
 
     async addNewContent(contentDto: ContentUploadDto, user: Users, filename?:string): Promise<Content> {

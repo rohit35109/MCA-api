@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubjectsRepository } from './subjects.repository';
 import { Subjects } from './subjects.entity';
@@ -30,6 +30,11 @@ export class SubjectsService {
     async deleteSubject(id: string): Promise<Subjects> {
         const subject = await this.getSubjectByID(id);
         subject.status = DefaultStatusEnum.DELETED;
+        try {
+            await subject.save();
+        } catch(err) {
+            throw new InternalServerErrorException('Something Went wrong. Please try again later');
+        }
         return subject;
     }
 
