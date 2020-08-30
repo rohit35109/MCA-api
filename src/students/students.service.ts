@@ -28,6 +28,8 @@ export class StudentsService {
         student.roll = updateStudentDto.roll;
         student.watsapp = updateStudentDto.watsapp;
         student.section = updateStudentDto.section;
+        student.year = updateStudentDto.year;
+        student.uniqueCode = updateStudentDto.uniqueCode;
         await student.save();
         return student;
     }
@@ -57,7 +59,7 @@ export class StudentsService {
     }
 
     async getStudents(filterDto: FilterStudentDto, user: Users): Promise<Students[]> {
-        const { branch, classes, section, status } = filterDto;
+        const { branch, classes, section, status, year } = filterDto;
         let students = await this.studentRepo.find();
         if (branch) {
             students = students.filter((student) => {
@@ -79,6 +81,32 @@ export class StudentsService {
                 return student.status === status;
             });
         }
+        if (year) {
+            students = students.filter((student) => {
+                return String(new Date(student.year).getFullYear()) === year;
+            });
+        }
         return students;
     }
+
+    async getStudentsCount(): Promise<{data: number}> {
+        const [students, count] = await this.studentRepo.findAndCount();
+        return {
+            data: count
+        }
+    }
+
+    async studentCodeExitsOrNot(code): Promise<{result: boolean}> {
+        const student = await this.studentRepo.find({uniqueCode: code});
+        if (student.length > 0) {
+            return {
+                result: true
+            }
+        } else {
+            return {
+                result: false
+            }
+        }
+    }
+
 }

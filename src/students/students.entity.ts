@@ -31,6 +31,12 @@ export class Students extends BaseEntity {
     branch: string;
 
     @Column()
+    year: string;
+
+    @Column()
+    uniqueCode: string;
+
+    @Column()
     createdBy: string;
 
     @Column({

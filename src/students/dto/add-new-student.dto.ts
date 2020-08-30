@@ -37,4 +37,15 @@ export class AddNewStudentDto {
     @IsNotEmpty()
     @IsString()
     branch: string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    uniqueCode: string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    year: string;
+
 }

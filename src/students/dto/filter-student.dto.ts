@@ -18,6 +18,10 @@ export class FilterStudentDto {
 
     @IsOptional()
     @ApiPropertyOptional()
+    year: string;
+
+    @IsOptional()
+    @ApiPropertyOptional()
     @IsIn([DefaultStatusEnum.ACTIVE, DefaultStatusEnum.DELETED, DefaultStatusEnum.INACTIVE])
     status: string;
 }

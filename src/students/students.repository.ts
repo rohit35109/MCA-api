@@ -8,7 +8,7 @@ import { InternalServerErrorException } from "@nestjs/common";
 export class StudentsRepository extends Repository<Students> {
 
     async addNewStudent(addNewStudentDto: AddNewStudentDto, user: Users): Promise<Students> {
-        const { branch, classes, name, roll, section, watsapp } = addNewStudentDto;
+        const { branch, classes, name, roll, section, watsapp, year, uniqueCode } = addNewStudentDto;
         const student = new Students();
         student.name = name;
         student.roll = roll;
@@ -16,6 +16,8 @@ export class StudentsRepository extends Repository<Students> {
         student.classes = classes;
         student.section = section;
         student.watsapp = watsapp;
+        student.year = year;
+        student.uniqueCode = uniqueCode;
         student.createdBy = user.id.toString();
         try {
             return await student.save();

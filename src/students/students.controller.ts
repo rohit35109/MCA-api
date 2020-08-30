@@ -1,4 +1,15 @@
-import { Controller, Post, Body, ValidationPipe, UseGuards, Get, Query, Param, Put, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  ValidationPipe,
+  UseGuards,
+  Get,
+  Query,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AddNewStudentDto } from './dto/add-new-student.dto';
@@ -12,53 +23,67 @@ import { StudentDetailsDto } from './dto/student-details.dto';
 @ApiTags('Students')
 @Controller('students')
 export class StudentsController {
+  constructor(private service: StudentsService) {}
 
-    constructor(private service: StudentsService) {
-    }
+  @Post()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  async addNewStudent(
+    @Body(ValidationPipe) addNewStudentDto: AddNewStudentDto,
+    @GetUser() user: Users,
+  ): Promise<Students> {
+    return await this.service.addNewStudent(addNewStudentDto, user);
+  }
 
-    @Post()
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard())
-    async addNewStudent(
-        @Body(ValidationPipe) addNewStudentDto: AddNewStudentDto,
-        @GetUser() user: Users): Promise<Students> {
-            return await this.service.addNewStudent(addNewStudentDto, user);
-        }
+  @Put()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  async updateStudent(
+    @Body(ValidationPipe) addNewStudentDto: AddNewStudentDto,
+  ): Promise<Students> {
+    return await this.service.udpateStudent(addNewStudentDto);
+  }
 
-    @Put()
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard())
-    async updateStudent(
-        @Body(ValidationPipe) addNewStudentDto: AddNewStudentDto): Promise<Students> {
-            return await this.service.udpateStudent(addNewStudentDto);
-        }
+  @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  async deleteStudent(@Param('id') id: string): Promise<void> {
+    return await this.service.deleteStudent(id);
+  }
 
-    @Delete(':id')
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard())
-    async deleteStudent(@Param('id') id: string): Promise<void> {
-        return await this.service.deleteStudent(id);
-    }
+  @Post('login')
+  async getStudentDetailsByLogin(
+    @Body(ValidationPipe) filterStudentDto: StudentDetailsDto,
+  ): Promise<Students> {
+    return await this.service.getStudentDetailsAuth(filterStudentDto);
+  }
 
-    @Post('login')
-    async getStudentDetailsByLogin(
-        @Body(ValidationPipe) filterStudentDto: StudentDetailsDto): Promise<Students> {
-            return await this.service.getStudentDetailsAuth(filterStudentDto);
-        }
+  @Get('/count')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  async getStudentsCount(): Promise<any> {
+    return await this.service.getStudentsCount();
+  }
 
-    @Get(':id')
-    async getStudentId(@Param('id') id: string): Promise<Students> {
-            return await this.service.getStudentByID(id);
-        }
+  @Get('/student/:code')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  async studentCodeExitsOrNot(@Param('code') code: string): Promise<any> {
+    return await this.service.studentCodeExitsOrNot(code);
+  }
 
-    @Get()
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard())
-    async getStudents(
-        @Query(ValidationPipe) filterDto: FilterStudentDto,
-        @GetUser() user: Users): Promise<Students[]> {
-            return await this.service.getStudents(filterDto, user);
-        }
+  @Get(':id')
+  async getStudentId(@Param('id') id: string): Promise<Students> {
+    return await this.service.getStudentByID(id);
+  }
 
-
+  @Get()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  async getStudents(
+    @Query(ValidationPipe) filterDto: FilterStudentDto,
+    @GetUser() user: Users,
+  ): Promise<Students[]> {
+    return await this.service.getStudents(filterDto, user);
+  }
 }
