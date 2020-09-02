@@ -6,6 +6,7 @@ import { ClassSectionDto } from './dto/class-section.dto';
 import { Classes } from './classes.entity';
 import { Section } from './section.entity';
 import { Users } from 'src/users/users.entity';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class ClassDetailsService {
@@ -78,5 +79,17 @@ export class ClassDetailsService {
         } catch(err) {
             throw new NotFoundException(`Sections were not found for the Class ID: ${id}`);
         }
+    }
+
+    async deleteClass(id: string): Promise<DeleteResult> {
+        await this.section.createQueryBuilder()
+                          .delete()
+                          .where({classes: id})
+        const result = await this.classes.delete(id);
+        if (result.affected === 0) {
+            throw new NotFoundException(`Student with ID: ${id} cannot be deleted.`);
+        }
+
+        return result;
     }
 }
