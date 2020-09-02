@@ -1,4 +1,4 @@
-import { Controller, Post, Body, ValidationPipe, Get, Query, UseGuards, Param, Put } from '@nestjs/common';
+import { Controller, Post, Body, ValidationPipe, Get, Query, UseGuards, Param, Put, Delete } from '@nestjs/common';
 import { SubjectsService } from './subjects.service';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateSubjectDto } from './dto/create-subject.dto';
@@ -45,5 +45,12 @@ export class SubjectsController {
         @Body(ValidationPipe) createSubjectDto: CreateSubjectDto
     ): Promise<Subjects> {
         return await this.service.updateSubject(createSubjectDto);
+    }
+
+    @Delete(':id')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async deleteStudent(@Param('id') id: string): Promise<Subjects> {
+        return await this.service.deleteSubject(id);
     }
 }
