@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ContentRepository } from './content.repository';
+import { getMongoRepository } from 'typeorm';
 import { ContentUploadDto } from './dto/content-upload.dto';
 import { Users } from 'src/users/users.entity';
 import { Content } from './content.entity';
@@ -17,6 +18,59 @@ export class ContentService {
     async getContent(filterDto: FilterUploadDto): Promise<Content[]> {
         const {branch, classes, section, chapter, subject, type} = filterDto;
         let allContent = await this.contentRepo.find();
+        if (branch) {
+            allContent = allContent.filter(content => {
+                return content.branch === branch;
+            });
+        }
+
+        if (classes) {
+            allContent = allContent.filter(content => {
+                return content.classes === classes;
+            });
+        }
+
+        if (section) {
+            allContent = allContent.filter(content => {
+                return content.section === section;
+            });
+        }
+
+        if (subject) {
+            allContent = allContent.filter(content => {
+                return content.subject === subject;
+            });
+        }
+
+        if (chapter) {
+            allContent = allContent.filter(content => {
+                return content.chapter === chapter;
+            });
+        }
+
+        if (type) {
+            allContent = allContent.filter(content => {
+                return content.type === type;
+            });
+        }
+        return allContent;
+    }
+
+    async getContentByPage(page: number, filterDto: FilterUploadDto): Promise<Content[]> {
+        const {branch, classes, section, chapter, subject, type} = filterDto;
+        let skipValue = page * 10;
+        let count = await this.contentRepo.count();
+        const contentMongo = getMongoRepository(Content);
+        if(count <= skipValue) {
+            return [];
+        }
+        
+        let allContent = await contentMongo.aggregateEntity([
+            { '$sort': { '_id' : -1 } },
+            { '$skip': skipValue },
+            { '$limit': 10 }
+        ]).toArray();
+
         if (branch) {
             allContent = allContent.filter(content => {
                 return content.branch === branch;

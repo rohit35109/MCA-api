@@ -33,7 +33,14 @@ export class SubjectsController {
         return await this.service.getAllSubjects(filterDto);
     }
 
-    @Get(':id')
+    @Get('/page')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async getSubjectsByPage(@Query('page') page: number): Promise<Subjects[]> {
+        return this.service.getSubjectsByPage(page);
+    }
+
+    @Get('id/:id')
     async getSubjectsByID(@Param('id') id: string): Promise<Subjects> {
         return await this.service.getSubjectByID(id);
     }
@@ -47,7 +54,7 @@ export class SubjectsController {
         return await this.service.updateSubject(createSubjectDto);
     }
 
-    @Delete(':id')
+    @Delete('id/:id')
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async deleteStudent(@Param('id') id: string): Promise<Subjects> {

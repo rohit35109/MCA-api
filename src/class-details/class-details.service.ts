@@ -1,7 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, Logger } from '@nestjs/common';
 import { ClassesRepository } from './classes.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SectionRepository } from './section.repository';
+import { getMongoRepository } from 'typeorm'
 import { ClassSectionDto } from './dto/class-section.dto';
 import { Classes } from './classes.entity';
 import { Section } from './section.entity';
@@ -29,6 +30,35 @@ export class ClassDetailsService {
                 return singleClass;
             });
         }));
+        return udpatedClassDetails;
+    }
+
+    async getClassesAndSectionByPage(page: number): Promise<Classes[]> {
+        let skipValue = page * 10;
+        let count = await this.classes.count();
+        const classMongo = getMongoRepository(Classes);
+
+        if(count <= skipValue) {
+            return [];
+        }
+        
+        const classDetails = await classMongo.aggregateEntity([
+            { '$sort': { '_id' : -1 } },
+            { '$skip': skipValue },
+            { '$limit': 10 }
+        ]).toArray();
+
+        if (!classDetails) {
+            throw new NotFoundException('Class List Not Found');
+        }
+
+        const udpatedClassDetails = Promise.all(classDetails.map(singleClass => {
+            return this.getAllSectionsForClassID(singleClass.id.toString()).then(item => {
+                singleClass.sections = item;
+                return singleClass;
+            });
+        }));
+
         return udpatedClassDetails;
     }
 
@@ -87,7 +117,7 @@ export class ClassDetailsService {
                           .where({classes: id})
         const result = await this.classes.delete(id);
         if (result.affected === 0) {
-            throw new NotFoundException(`Student with ID: ${id} cannot be deleted.`);
+            throw new NotFoundException(`Class with ID: ${id} cannot be deleted.`);
         }
 
         return result;

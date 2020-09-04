@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, ValidationPipe, Delete, UseGuards, Put } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Body, ValidationPipe, Delete, UseGuards, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Users } from './users.entity';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -20,13 +20,20 @@ export class UsersController {
         return this._userService.getAllUsers();
     }
 
-    @Get('/:id')
+    @Get('id/:id')
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async getUserByID(
         @Param('id') id: string
     ): Promise<Users> {
         return this._userService.getUserById(id);
+    }
+
+    @Get('/page')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async getUserByPage(@Query('page') page: number): Promise<Users[]> {
+        return this._userService.getUsersByPage(page);
     }
 
     @Post()
@@ -48,7 +55,7 @@ export class UsersController {
         return this._userService.updateNewUser(updateUser);
     }
 
-    @Delete('/:id')
+    @Delete('id/:id')
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async deleteUser(@Param('id') id: string): Promise<void> {

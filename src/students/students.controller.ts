@@ -23,7 +23,7 @@ import { StudentDetailsDto } from './dto/student-details.dto';
 @ApiTags('Students')
 @Controller('students')
 export class StudentsController {
-  constructor(private service: StudentsService) {}
+  constructor(private service: StudentsService) { }
 
   @Post()
   @ApiBearerAuth()
@@ -44,7 +44,7 @@ export class StudentsController {
     return await this.service.udpateStudent(addNewStudentDto);
   }
 
-  @Delete(':id')
+  @Delete('id/:id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   async deleteStudent(@Param('id') id: string): Promise<void> {
@@ -72,9 +72,16 @@ export class StudentsController {
     return await this.service.studentCodeExitsOrNot(code);
   }
 
-  @Get(':id')
+  @Get('id/:id')
   async getStudentId(@Param('id') id: string): Promise<Students> {
     return await this.service.getStudentByID(id);
+  }
+
+  @Get('/page')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard())
+  async getStudentsByPage(@Query('page') page: number): Promise<Students[]> {
+    return this.service.getStudentsByPage(page);
   }
 
   @Get()

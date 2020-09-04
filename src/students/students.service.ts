@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StudentsRepository } from './students.repository';
 import { AddNewStudentDto } from './dto/add-new-student.dto';
@@ -7,14 +7,14 @@ import { Students } from './students.entity';
 import { FilterStudentDto } from './dto/filter-student.dto';
 import { Roles } from 'src/common/enum/roles.enum';
 import { StudentDetailsDto } from './dto/student-details.dto';
+import { getMongoRepository } from 'typeorm';
 
 @Injectable()
 export class StudentsService {
     constructor(
         @InjectRepository(StudentsRepository)
         private studentRepo: StudentsRepository
-    ) {
-    }
+    ) {}
 
     async addNewStudent(addNewStudentDto: AddNewStudentDto, user: Users): Promise<Students> {
         return await this.studentRepo.addNewStudent(addNewStudentDto, user);
@@ -94,6 +94,21 @@ export class StudentsService {
         return {
             data: count
         }
+    }
+
+    async getStudentsByPage(page: number): Promise<Students[]> {
+        let skipValue = page * 10;
+        let count = await this.studentRepo.count();
+        const studentMongo = getMongoRepository(Students);
+        if(count <= skipValue) {
+            return [];
+        }
+        
+        return await studentMongo.aggregateEntity([
+            { '$sort': { '_id' : -1 } },
+            { '$skip': skipValue },
+            { '$limit': 10 }
+        ]).toArray();
     }
 
     async studentCodeExitsOrNot(code): Promise<{result: boolean}> {

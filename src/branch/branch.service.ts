@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BranchRepository } from './branch.repository';
+import { getMongoRepository } from 'typeorm'
 import { Branch } from './branch.entity';
 import { BranchDto } from './dto/branch.dto';
 import { Users } from 'src/users/users.entity';
@@ -25,6 +26,21 @@ export class BranchService {
             throw new NotFoundException(`Branch with ID ${id} was not found`);
         }
         return branch;
+    }
+
+    public async getBranchesByPage(page: number): Promise<Branch[]> {
+        let skipValue = page * 10;
+        let count = await this.branchRepository.count();
+        const branchMongo = getMongoRepository(Branch);
+        if(count <= skipValue) {
+            return [];
+        }
+        
+        return await branchMongo.aggregateEntity([
+            { '$sort': { '_id' : -1 } },
+            { '$skip': skipValue },
+            { '$limit': 10 }
+        ]).toArray();
     }
 
     public async updateBranch(branchDto: BranchDto): Promise<Branch> {
