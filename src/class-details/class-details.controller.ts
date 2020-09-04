@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Body, ValidationPipe, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Query, Body, ValidationPipe, Param, UseGuards } from '@nestjs/common';
 import { ClassDetailsService } from './class-details.service';
 import { Classes } from './classes.entity';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -19,9 +19,16 @@ export class ClassDetailsController {
         return this.service.getAllClassesAndSection();
     }
 
-    @Get('/:id')
+    @Get('id/:id')
     async getClassDetailsById(@Param('id') id: string): Promise<Classes> {
         return this.service.getClassById(id);
+    }
+
+    @Get('/page')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async getClassesAndSectionByPage(@Query('page') page: number): Promise<Classes[]> {
+        return this.service.getClassesAndSectionByPage(page);
     }
 
     @Post()
@@ -34,7 +41,7 @@ export class ClassDetailsController {
         return this.service.createNewClassAndSection(classSectionDto, user);
     }
 
-    @Delete(':id')
+    @Delete('id/:id')
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async deleteStudent(@Param('id') id: string): Promise<DeleteResult> {

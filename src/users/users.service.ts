@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, Logger, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
+import { getMongoRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,6 +26,21 @@ export class UsersService {
             select: ["id", "name", "email", "status", "classes", "createdBy",
              "section", "branch"]
         });
+    }
+
+    async getUsersByPage(page: number): Promise<Users[]> {
+        let skipValue = page * 10;
+        let count = await this.userRepository.count();
+        const userMongo = getMongoRepository(Users);
+        if(count <= skipValue) {
+            return [];
+        }
+        
+        return await userMongo.aggregateEntity([
+            { '$sort': { '_id' : -1 } },
+            { '$skip': skipValue },
+            { '$limit': 10 }
+        ]).toArray();
     }
 
     async getUserById(id: string): Promise<Users> {

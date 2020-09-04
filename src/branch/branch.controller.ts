@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, ValidationPipe, UseGuards, Patch, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Body, ValidationPipe, UseGuards, Patch, Delete, Put } from '@nestjs/common';
 import { Branch } from './branch.entity';
 import { BranchService } from './branch.service';
 import { BranchDto } from './dto/branch.dto';
@@ -19,9 +19,16 @@ export class BranchController {
         return await this.branchService.getAllBranches();
     }
 
-    @Get('/:id')
+    @Get('id/:id')
     async getBranchById(@Param('id') id: string): Promise<Branch> {
         return await this.branchService.getBranchId(id);
+    }
+
+    @Get('/page')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async getUserByPage(@Query('page') page: number): Promise<Branch[]> {
+        return this.branchService.getBranchesByPage(page);
     }
 
     @Put()
@@ -33,7 +40,7 @@ export class BranchController {
         return await this.branchService.updateBranch(branchDto);
     }
 
-    @Delete(':id')
+    @Delete('id/:id')
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async deleteBranch(

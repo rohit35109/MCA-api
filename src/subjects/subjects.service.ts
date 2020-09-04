@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubjectsRepository } from './subjects.repository';
+import { getMongoRepository } from 'typeorm'
 import { Subjects } from './subjects.entity';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { Users } from 'src/users/users.entity';
@@ -25,6 +26,21 @@ export class SubjectsService {
             throw new NotFoundException(`Subject with ID ${id} was not found`);
         }
         return subject;
+    }
+
+    async getSubjectsByPage(page: number): Promise<Subjects[]> {
+        let skipValue = page * 10;
+        let count = await this.subjectsRepository.count();
+        const subjectMongo = getMongoRepository(Subjects);
+        if(count <= skipValue) {
+            return [];
+        }
+        
+        return await subjectMongo.aggregateEntity([
+            { '$sort': { '_id' : -1 } },
+            { '$skip': skipValue },
+            { '$limit': 10 }
+        ]).toArray();
     }
 
     async deleteSubject(id: string): Promise<Subjects> {
