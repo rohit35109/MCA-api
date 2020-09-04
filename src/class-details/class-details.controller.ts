@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Query, Body, ValidationPipe, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put, Post, Delete, Query, Body, ValidationPipe, Param, UseGuards } from '@nestjs/common';
 import { ClassDetailsService } from './class-details.service';
 import { Classes } from './classes.entity';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -29,6 +29,15 @@ export class ClassDetailsController {
     @UseGuards(AuthGuard())
     async getClassesAndSectionByPage(@Query('page') page: number): Promise<Classes[]> {
         return this.service.getClassesAndSectionByPage(page);
+    }
+
+    @Put()
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    async updateClass(
+        @Body(ValidationPipe) classSectionDto: ClassSectionDto,
+        ): Promise<Classes> {
+        return this.service.updateClass(classSectionDto);
     }
 
     @Post()

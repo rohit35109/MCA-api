@@ -111,6 +111,15 @@ export class ClassDetailsService {
         }
     }
 
+    async updateClass(createClasstDto: ClassSectionDto): Promise<Classes> {
+        const cls = await this.getClassById(createClasstDto.id);
+        cls.name = createClasstDto.name;
+        cls.sectionCount = createClasstDto.sectionCount;
+        cls.status = createClasstDto.status;
+        await cls.save();
+        return cls;
+    }
+
     async deleteClass(id: string): Promise<DeleteResult> {
         await this.section.createQueryBuilder()
                           .delete()
