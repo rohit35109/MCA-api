@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubjectsRepository } from './subjects.repository';
 import { getMongoRepository } from 'typeorm'
+import { Classes } from 'src/class-details/classes.entity';
 import { Subjects } from './subjects.entity';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { Users } from 'src/users/users.entity';
@@ -31,12 +32,18 @@ export class SubjectsService {
     async getSubjectsByPage(page: number): Promise<Subjects[]> {
         let skipValue = page * 10;
         let count = await this.subjectsRepository.count();
+        const classMongo = getMongoRepository(Classes);
         const subjectMongo = getMongoRepository(Subjects);
         if(count <= skipValue) {
             return [];
         }
+
+        let classList = await classMongo.find();
+        let clsList = classList.map(cls => cls.id.toString());
         
         return await subjectMongo.aggregateEntity([
+            { '$match': { 'classes' : { '$in' : clsList }}},
+            { '$match': { 'status' : 'ACTIVE' }},
             { '$sort': { '_id' : -1 } },
             { '$skip': skipValue },
             { '$limit': 10 }

@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ContentRepository } from './content.repository';
 import { getMongoRepository } from 'typeorm';
 import { ContentUploadDto } from './dto/content-upload.dto';
+import { Classes } from 'src/class-details/classes.entity';
+import { Subjects } from 'src/subjects/subjects.entity';
 import { Users } from 'src/users/users.entity';
 import { Content } from './content.entity';
 import { FilterUploadDto } from './dto/filter-upload.dto';
@@ -60,12 +62,22 @@ export class ContentService {
         const {branch, classes, section, chapter, subject, type} = filterDto;
         let skipValue = page * 10;
         let count = await this.contentRepo.count();
+        const classMongo = getMongoRepository(Classes);
+        const subjectMongo = getMongoRepository(Subjects);
         const contentMongo = getMongoRepository(Content);
         if(count <= skipValue) {
             return [];
         }
+
+        let classList = await classMongo.find();
+        let clsList = classList.map(cls => cls.id.toString());
+
+        let subjectList = (await subjectMongo.find()).filter(sub => sub.status == 'ACTIVE');
+        let subList = subjectList.map(sub => sub.id.toString());
         
         let allContent = await contentMongo.aggregateEntity([
+            { '$match': { 'classes' : { '$in' : clsList }}},
+            { '$match': { 'subject' : { '$in' : subList }}},
             { '$sort': { '_id' : -1 } },
             { '$skip': skipValue },
             { '$limit': 10 }

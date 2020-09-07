@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { StudentsRepository } from './students.repository';
 import { AddNewStudentDto } from './dto/add-new-student.dto';
 import { Users } from 'src/users/users.entity';
+import { Classes } from 'src/class-details/classes.entity';
 import { Students } from './students.entity';
 import { FilterStudentDto } from './dto/filter-student.dto';
 import { Roles } from 'src/common/enum/roles.enum';
@@ -99,12 +100,17 @@ export class StudentsService {
     async getStudentsByPage(page: number): Promise<Students[]> {
         let skipValue = page * 10;
         let count = await this.studentRepo.count();
+        const classMongo = getMongoRepository(Classes);
         const studentMongo = getMongoRepository(Students);
         if(count <= skipValue) {
             return [];
         }
+
+        let classList = await classMongo.find();
+        let clsList = classList.map(cls => cls.id.toString());
         
         return await studentMongo.aggregateEntity([
+            { '$match': { 'classes' : { '$in' : clsList }}},
             { '$sort': { '_id' : -1 } },
             { '$skip': skipValue },
             { '$limit': 10 }

@@ -37,6 +37,7 @@ export class BranchService {
         }
         
         return await branchMongo.aggregateEntity([
+            { '$match': { 'status' : 'ACTIVE' }},
             { '$sort': { '_id' : -1 } },
             { '$skip': skipValue },
             { '$limit': 10 }
