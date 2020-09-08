@@ -52,9 +52,8 @@ export class SubjectsService {
 
     async deleteSubject(id: string): Promise<Subjects> {
         const subject = await this.getSubjectByID(id);
-        subject.status = DefaultStatusEnum.DELETED;
         try {
-            await subject.save();
+            await this.subjectsRepository.delete({id: id});
         } catch(err) {
             throw new InternalServerErrorException('Something Went wrong. Please try again later');
         }
