@@ -19,7 +19,19 @@ export class ContentService {
 
     async getContent(filterDto: FilterUploadDto): Promise<Content[]> {
         const {branch, classes, section, chapter, subject, type} = filterDto;
-        let allContent = await this.contentRepo.find();
+        const classMongo = getMongoRepository(Classes);
+        const subjectMongo = getMongoRepository(Subjects);
+        const contentMongo = getMongoRepository(Content);
+
+        let classList = await classMongo.find();
+        let clsList = classList.map(cls => cls.id.toString());
+        let subjectList = (await subjectMongo.find()).filter(sub => sub.status == 'ACTIVE');
+        let subList = subjectList.map(sub => sub.id.toString());
+
+        let allContent = await contentMongo.aggregateEntity([
+            { '$match': { 'classes' : { '$in' : clsList }}},
+            { '$match': { 'subject' : { '$in' : subList }}},
+        ]).toArray();
         if (branch) {
             allContent = allContent.filter(content => {
                 return content.branch === branch;

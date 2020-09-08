@@ -15,7 +15,7 @@ export class StudentsService {
     constructor(
         @InjectRepository(StudentsRepository)
         private studentRepo: StudentsRepository
-    ) {}
+    ) { }
 
     async addNewStudent(addNewStudentDto: AddNewStudentDto, user: Users): Promise<Students> {
         return await this.studentRepo.addNewStudent(addNewStudentDto, user);
@@ -61,7 +61,15 @@ export class StudentsService {
 
     async getStudents(filterDto: FilterStudentDto, user: Users): Promise<Students[]> {
         const { branch, classes, section, status, year } = filterDto;
-        let students = await this.studentRepo.find();
+        const classMongo = getMongoRepository(Classes);
+        const studentMongo = getMongoRepository(Students);
+
+        let classList = await classMongo.find();
+        let clsList = classList.map(cls => cls.id.toString());
+        let students = await studentMongo.aggregateEntity([
+            { '$match': { 'classes': { '$in': clsList } } }
+        ]).toArray();
+        
         if (branch) {
             students = students.filter((student) => {
                 return student.branch === branch;
@@ -90,7 +98,7 @@ export class StudentsService {
         return students;
     }
 
-    async getStudentsCount(): Promise<{data: number}> {
+    async getStudentsCount(): Promise<{ data: number }> {
         const [students, count] = await this.studentRepo.findAndCount();
         return {
             data: count
@@ -102,23 +110,23 @@ export class StudentsService {
         let count = await this.studentRepo.count();
         const classMongo = getMongoRepository(Classes);
         const studentMongo = getMongoRepository(Students);
-        if(count <= skipValue) {
+        if (count <= skipValue) {
             return [];
         }
 
         let classList = await classMongo.find();
         let clsList = classList.map(cls => cls.id.toString());
-        
+
         return await studentMongo.aggregateEntity([
-            { '$match': { 'classes' : { '$in' : clsList }}},
-            { '$sort': { '_id' : -1 } },
+            { '$match': { 'classes': { '$in': clsList } } },
+            { '$sort': { '_id': -1 } },
             { '$skip': skipValue },
             { '$limit': 10 }
         ]).toArray();
     }
 
-    async studentCodeExitsOrNot(code): Promise<{result: boolean}> {
-        const student = await this.studentRepo.find({uniqueCode: code});
+    async studentCodeExitsOrNot(code): Promise<{ result: boolean }> {
+        const student = await this.studentRepo.find({ uniqueCode: code });
         if (student.length > 0) {
             return {
                 result: true
