@@ -111,7 +111,7 @@ export class UsersService {
         if (!adminUser) {
             return await this.createNewUser({
                 name: 'Admin', email: 'admin@mca.com', branch: '', classes: '', section: '',
-                password: 'mca@123', roles: Roles.ADMIN
+                password: 'mca@2020', roles: Roles.ADMIN
             }, null);
         }
     }
