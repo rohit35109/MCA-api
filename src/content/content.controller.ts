@@ -53,17 +53,17 @@ export class ContentController {
         return await this.service.getContent(filterDto);
     }
 
-    @Get('id/:fileID')
-    async getUploadedFileByID(@Param('fileID') fileID: string, @Res() res) {
-        return await res.sendFile(fileID, {root: 'upload'});
-    }
-
     @Get('/page')
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     async getUserByPage(@Query('page') page: number, 
                         @Query(ValidationPipe) filterDto: FilterUploadDto): Promise<Content[]> {
                             return this.service.getContentByPage(page, filterDto);
+    }
+
+    @Get(':fileID')
+    async getUploadedFileByID(@Param('fileID') fileID: string, @Res() res) {
+        return await res.sendFile(fileID, {root: 'upload'});
     }
 
 }
