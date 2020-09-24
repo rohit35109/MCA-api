@@ -53,7 +53,7 @@ export class SubjectsService {
     async deleteSubject(id: string): Promise<Subjects> {
         const subject = await this.getSubjectByID(id);
         try {
-            await this.subjectsRepository.delete({id: id});
+            await this.subjectsRepository.delete(id);
         } catch(err) {
             throw new InternalServerErrorException('Something Went wrong. Please try again later');
         }
