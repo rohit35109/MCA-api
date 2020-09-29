@@ -31,6 +31,7 @@ export class ContentService {
         let allContent = await contentMongo.aggregateEntity([
             { '$match': { 'classes' : { '$in' : clsList }}},
             { '$match': { 'subject' : { '$in' : subList }}},
+            { '$sort': { 'createdOn': -1 } },
         ]).toArray();
         if (branch) {
             allContent = allContent.filter(content => {
@@ -67,6 +68,7 @@ export class ContentService {
                 return content.type === type;
             });
         }
+        // allContent = allContent.sort((a: any, b: any) => b.createdOn - a.createdOn);
         return allContent;
     }
 
@@ -90,7 +92,7 @@ export class ContentService {
         let allContent = await contentMongo.aggregateEntity([
             { '$match': { 'classes' : { '$in' : clsList }}},
             { '$match': { 'subject' : { '$in' : subList }}},
-            { '$sort': { '_id' : -1 } },
+            { '$sort': { 'createdOn': -1 } },
             { '$skip': skipValue },
             { '$limit': 10 }
         ]).toArray();
